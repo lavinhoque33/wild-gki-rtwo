@@ -81,8 +81,13 @@ runs:
           if [ "$PAGE_SIZE" = "16k" ]; then
             PAGE_SIZE_FLAGS+=(--page_size=16k)
           fi
+          # rtwo fork: kleaf trims exported symbols that are not in the KMI
+          # symbol list (relay_file_operations is one), which makes the
+          # vendor qca_cld3 modules fail to load with Unknown symbol.
+          # --notrim disables TRIM_NONLISTED_KMI globally.
           tools/bazel build \
             --config=fast \
+            --notrim \
             "${PAGE_SIZE_FLAGS[@]}" \
             --disk_cache=/home/runner/.cache/bazel \
             //common:kernel_aarch64/Image
