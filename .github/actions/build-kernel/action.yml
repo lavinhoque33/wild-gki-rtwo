@@ -61,6 +61,9 @@ runs:
             echo "ERROR: page_size=${PAGE_SIZE} is only supported by the Kleaf (Bazel) build; this tree uses build/build.sh." >&2
             exit 1
           fi
+          # rtwo fork: build.sh trims exported symbols that are not in the
+          # KMI symbol list (relay_file_operations is one), which makes the
+          # vendor qca_cld3 modules fail to load with Unknown symbol.
           BUILD_GKI_ARTIFACTS="" \
           BUILD_GKI_CERTIFICATION_TOOLS=0 \
           BUILD_SYSTEM_DLKM=0 \
@@ -69,6 +72,7 @@ runs:
           SKIP_CP_KERNEL_HDR=1 \
           OUT_DIR="/home/runner/out" \
           LTO=thin \
+          TRIM_NONLISTED_KMI=0 \
           BUILD_CONFIG=common/build.config.gki.aarch64 \
           CC="/usr/bin/ccache clang" \
           CXX="/usr/bin/ccache clang++" \
@@ -81,10 +85,8 @@ runs:
           if [ "$PAGE_SIZE" = "16k" ]; then
             PAGE_SIZE_FLAGS+=(--page_size=16k)
           fi
-          # rtwo fork: kleaf trims exported symbols that are not in the KMI
-          # symbol list (relay_file_operations is one), which makes the
-          # vendor qca_cld3 modules fail to load with Unknown symbol.
-          # --notrim disables TRIM_NONLISTED_KMI globally.
+          # rtwo fork: pass --notrim so a Kleaf-based tree also keeps
+          # non-KMI exports (this tree takes the build.sh path above).
           tools/bazel build \
             --config=fast \
             --notrim \
