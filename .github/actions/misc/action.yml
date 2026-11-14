@@ -41,4 +41,9 @@ runs:
           # (relay_open, relay_close, ...); GKI defconfig leaves CONFIG_RELAY
           # unset, so the modules fail to load and wlan0 never appears.
           CONFIG_RELAY=y
+          # rtwo fork: keep every exported symbol. Unused-ksym trimming
+          # drops non-KMI exports such as relay_file_operations that the
+          # vendor qca_cld3 modules link against, so the module load
+          # fails with Unknown symbol even when relayfs itself is built in.
+          CONFIG_TRIM_UNUSED_KSYMS=n
           
