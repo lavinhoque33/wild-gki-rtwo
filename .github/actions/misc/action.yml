@@ -37,9 +37,8 @@ runs:
           CONFIG_PPP_DEFLATE=y
           CONFIG_PPP_MPPE=y
           CONFIG_PPTP=y
-          # rtwo fork: the vendor qca_cld3_kiwi*/qca6490 WLAN modules link
-          # against relay_open/relay_close/relay_* (relayfs). GKI defconfig
-          # leaves CONFIG_RELAY unset, so the modules fail to load with
-          # "Unknown symbol relay_open" and Wi-Fi never comes up.
+          # rtwo fork: vendor qca_cld3_kiwi and qca6490 modules need relayfs
+          # (relay_open, relay_close, ...); GKI defconfig leaves CONFIG_RELAY
+          # unset, so the modules fail to load and wlan0 never appears.
           CONFIG_RELAY=y
           
